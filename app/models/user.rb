@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  has_many :events, :foreign_key => :creator_id
+
   attr_accessor :remember_token
 
   before_save { email.downcase! }
