@@ -3,11 +3,12 @@ class EventsController < ApplicationController
   before_action :correct_user, only: [:destroy]
 
   def index
-    @events = Event.all
+    @events_upcoming = Event.upcoming
+    @events_past = Event.past
   end
 
   def new
-    @event = Event.new
+    @event = current_user.events.build
   end
 
   def create
@@ -22,9 +23,6 @@ class EventsController < ApplicationController
 
   def show
     @event = Event.find(params[:id])
-  end
-
-  def destroy
   end
 
   private

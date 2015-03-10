@@ -1,6 +1,9 @@
 class User < ActiveRecord::Base
   has_many :events, :foreign_key => :creator_id
 
+  has_many :attended_events, :through => :invites
+  has_many :invites, :foreign_key => :attendee_id
+
   attr_accessor :remember_token
 
   before_save { email.downcase! }
@@ -36,4 +39,25 @@ class User < ActiveRecord::Base
   def forget
     update_attribute(:remember_digest,nil)
   end
+
+  def attending?(event)
+    event.attendees.include?(self)
+  end
+
+  def attend!(event)
+    self.invites.create!(attended_event_id: event.id)
+  end
+
+  def cancel!(event)
+    self.invites.find_by(attended_event_id: event.id).destroy
+  end
+
+  def upcoming_events
+    self.attended_events.upcoming
+  end
+
+  def previous_events
+    self.attended_events.past
+  end
+
 end
